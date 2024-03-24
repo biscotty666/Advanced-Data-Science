@@ -1,4 +1,0 @@
-"0","compute_prob <- function(n, B = 10000){"
-"0","  results <- replicate(B, same_birthday(n))"
-"0","  mean(results)"
-"0","}"

@@ -1,4 +1,0 @@
-"0","library(tidyverse)"
-"0","n <- seq(1,60)"
-"0","prob <- sapply(n, compute_prob)"
-"0","qplot(n, prob)"

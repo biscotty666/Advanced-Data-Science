@@ -1,5 +1,0 @@
-"0","blackjack <- function(){"
-"0","  hand <- sample(deck, 2)"
-"0","  (hand[1] %in% aces & hand[2] %in% facecard) | "
-"0","  (hand[2] %in% aces & hand[1] %in% facecard)"
-"0","}"

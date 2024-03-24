@@ -1,4 +1,0 @@
-"0","aces <- paste(""Ace"", suits)"
-"0","facecard <- c(""King"", ""Queen"", ""Jack"", ""Ten"")"
-"0","facecard <- expand.grid(number = facecard, suit = suits)"
-"0","facecard <- paste(facecard$number, facecard$suit)"

@@ -1,6 +1,0 @@
-"0","switch <- replicate(B, monty_hall(""switch""))"
-"0","mean(switch)"
-"1","[1]"
-"1"," 0.6631"
-"1","
-"
