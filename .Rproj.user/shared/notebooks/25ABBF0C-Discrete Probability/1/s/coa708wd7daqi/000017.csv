@@ -1,0 +1,6 @@
+"0","stick <- replicate(B, monty_hall(""stick""))"
+"0","mean(stick)"
+"1","[1]"
+"1"," 0.3341"
+"1","
+"

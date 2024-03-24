@@ -1,0 +1,7 @@
+"0","B <- 10^seq(1, 5, len = 100)"
+"0","compute_prob <- function(B, n = 25){"
+"0","  same_day <- replicate(B, same_birthday(n))"
+"0","  mean(same_day)"
+"0","}"
+"0","prob <- sapply(B, compute_prob)"
+"0","plot(log10(B), prob)"

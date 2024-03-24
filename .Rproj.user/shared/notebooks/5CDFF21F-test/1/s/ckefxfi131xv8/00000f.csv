@@ -1,0 +1,7 @@
+"0","hands <- combinations(52, 2, v = deck)"
+"0","mean((hands[,1] %in% aces & hands[,2] %in% facecard) |"
+"0","       (hands[,2] %in% aces & hands[,1] %in% facecard))"
+"1","[1]"
+"1"," 0.04826546"
+"1","
+"

@@ -1,0 +1,7 @@
+"0","B <- 10000"
+"0","results <- replicate(B, blackjack())"
+"0","mean(results)"
+"1","[1]"
+"1"," 0.0474"
+"1","
+"

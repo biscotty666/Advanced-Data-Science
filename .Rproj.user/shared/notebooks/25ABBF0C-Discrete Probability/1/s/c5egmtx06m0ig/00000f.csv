@@ -1,0 +1,6 @@
+"0","mean(first_card %in% kings & second_card %in% kings) /"
+"0","  mean(first_card %in% kings)"
+"1","[1]"
+"1"," 0.05882353"
+"1","
+"

@@ -1,0 +1,33 @@
+{
+    "id": "52514229",
+    "path": "~/Learning/R/Advanced Data Science/docs/Discrete_Probability.Rmd",
+    "project_path": "docs/Discrete_Probability.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1711308119740.0,
+    "source_on_save": true,
+    "relative_order": 1,
+    "properties": {
+        "chunk_output_type": "inline",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "5,0",
+        "scrollLine": "0",
+        "rmdVisualMode": "false",
+        "rmdVisualWrapConfigured": "true",
+        "docOutlineVisible": "1",
+        "rmdVisualCollapsedChunks": "",
+        "rmdVisualModeLocation": "2:0",
+        "docOutlineSize": "133"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1711311534,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1711311534273,
+    "read_only": false,
+    "read_only_alternatives": []
+}

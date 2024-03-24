@@ -1,0 +1,8 @@
+"0","exact_prob <- function(n){"
+"0","  prob_unique <- seq(365, 365 - n + 1) / 365"
+"0","  1 - prod(prob_unique)"
+"0","}"
+"0","eprob <- sapply(n, exact_prob)"
+"0","ggplot() +"
+"0","  geom_point(aes(n, prob)) +"
+"0","  geom_line(aes(n, eprob), col=""red"")"
