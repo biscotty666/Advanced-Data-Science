@@ -1,0 +1,176 @@
+---
+title: "Continuous Probability"
+output: html_notebook
+---
+
+# Continuous Probability
+
+```{r}
+library(tidyverse)
+library(dslabs)
+library(plotly)
+```
+
+```{r}
+x <- heights %>% filter(sex == "Male") %>% 
+  pull(height)
+```
+
+# eCDF and Cumulative Distribution Function
+
+eDF is defined:
+
+```{r}
+F <- function(a) mean(x <= a)
+```
+
+What is the chance the man is taller than 70.5 inches:
+```{r}
+1 - F(70)
+```
+
+CDF:
+
+$$F(a) = \mbox{Pr}(X \leq a)$$
+Probability of a student being between height $a$ and $b$:
+
+$$\mbox{Pr}(a < X \leq b) = F(b)-F(a)$$
+
+## Probability Density Function
+
+$$F(b) - F(a) = \int_a^b f(x)\,dx$$
+
+Gamma distribution
+
+```{r}
+cont <- data.frame(x = seq(0, 5, len = 300), y = dgamma(seq(0, 5, len = 300), 2, 2))
+disc <- data.frame(x = seq(0, 5, 0.075), y = dgamma(seq(0, 5, 0.075), 2, 2))
+ggplot(mapping = aes(x, y)) +
+  geom_col(data =  disc) +
+  geom_line(data = cont) +
+  ylab("f(x)") -> p
+ggplotly(p)
+
+```
+
+PDF for normal distribution:
+
+$$f(x) = e^{-\frac{1}{2}\left( \frac{x-m}{s} \right)^2}$$
+
+```{r, eval=FALSE}
+F(a) = pnorm(a, m, s)
+```
+
+```{r}
+m <- mean(x)
+s <- sd(x)
+1 - pnorm(70.5, m, s)
+```
+
+```{r}
+mean(x <= 68.5) - mean(x <= 67.5)
+pnorm(68.5, m, s) - pnorm(67.5, m, s) 
+mean(x <= 69.5) - mean(x <= 68.5)
+pnorm(69.5, m, s) - pnorm(68.5, m, s) 
+mean(x <= 70.5) - mean(x <= 69.5)
+pnorm(70.5, m, s) - pnorm(69.5, m, s) 
+```
+
+**But** it doesn't work if the interval is too small.
+
+```{r}
+mean(x <= 70.9) - mean(x <= 70.1)
+pnorm(70.9, m, s) - pnorm(70.1, m, s)
+mean(x <= 68.9) - mean(x <= 68.1)
+pnorm(68.9, m, s) - pnorm(68.1, m, s)
+```
+
+```{r}
+mean(x <= 69.9) - mean(x <= 66.1)
+pnorm(69.9, m, s) - pnorm(66.1, m, s)
+```
+
+# The Probability Density
+
+Use the normal distribution to estimate probability taller than 76 in
+
+```{r}
+1 - pnorm(76, m, s)
+```
+
+```{r}
+dat <- tibble(x = seq(-4, 4, length = 100)*s + m,
+              y = dnorm(x, m, s))
+
+dat_ribbon <- filter(dat, x >= 2*s + m)
+
+ggplot(dat, aes(x, y)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = 0, ymax = y), data = dat_ribbon) -> p
+ggplotly(p)
+```
+
+# Monte Carlo
+
+```{r}
+n <- length(x)
+m <- mean(x)
+s <- sd(x)
+simulated_heights <- rnorm(n, m, s)
+```
+
+```{r}
+data.frame(simulated_heights = simulated_heights) |>
+  ggplot(aes(simulated_heights)) + 
+  geom_histogram(color = "black", binwidth = 1) 
+```
+
+If, for example, we pick 800 males at random, what is the distribution of the tallest person? How rare is a seven-footer in a group of 800 males? 
+
+```{r}
+B <- 10000
+tallest <- replicate(B, {
+  simulated_data <- rnorm(800, m, s)
+  max(simulated_data)
+})
+```
+
+```{r}
+mean(tallest >= 7*12)
+```
+
+Such a person is quite rare.
+
+```{r}
+data.frame(tallest = tallest) %>% 
+  ggplot(aes(tallest)) +
+  geom_histogram(color='black', binwidth = 1)
+  
+```
+
+The distribution does not look normal.
+
+# Continuous distributions
+
+
+```{r}
+data.frame(x, f = dnorm(x)) %>% 
+  ggplot(aes(x, f)) +
+  geom_line()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,17 @@
+---
+title: "Statistical Inference"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(dslabs)
+```
+
+```{r}
+take_poll(25)
+```
+
+
+
+

@@ -1,0 +1,255 @@
+---
+title: "Ch 20 Matrices in R"
+output: html_notebook
+---
+
+# Case study: MNIST
+
+The images are converted into 28×28=784 pixels and, for each pixel, we obtain a grey scale intensity between 0 (white) and 255 (black).
+
+```{r}
+library(tidyverse)
+library(dslabs)
+mnist <- read_mnist()
+```
+
+In these cases, the pixel intensities are saved in a matrix:
+
+```{r}
+class(mnist$train$images)
+```
+
+The labels associated with each image are included in a vector:
+
+```{r}
+table(mnist$train$labels)
+```
+
+## **Motivating tasks**
+
+To motivate the use of matrices in R, we will pose six tasks related to the handwritten digits data and then show the fast and simple code that solves them.
+
+1\. [Task 1: Visualize original image]. The pixel intensities are provided as rows in a matrix. We will show how to convert these to a matrix that we can visualize.
+
+2\. [Task 2: Do some digits require more ink?] We will study the distribution of the total pixel darkness and how it varies by digits.
+
+3\. [Task 3: Uninformative pixels?] We will study the variation of each pixel across digits and remove predictors (columns) associated with pixels that don’t change much and thus can’t provide much information for classification.
+
+4\. [Task 4: Remove the smudges] We will first look at the distribution of all pixel values. Next, we will use this to pick a cutoff to define unwritten space. Then, we set anything below that cutoff to 0.
+
+5\. [Task 5: Binarizing the data]. First, we will look at the distribution of all pixel values. We will then use this to pick a cutoff to distinguish between writing and no writing. Afterward, we will convert all entries into either 1 or 0.
+
+6\. Standardize the digits. We will scale each of the predictors in each entry to have the same average and standard deviation.
+
+```{r}
+x <- mnist$train$images
+y <- mnist$train$labels
+```
+
+# Dimensions of a matrix
+
+```{r}
+nrow(x)
+ncol(x)
+dim(x)
+```
+
+# Creating a matrix
+
+```         
+matrix(data = NA, nrow = 1, ncol = 1, byrow = FALSE,
+       dimnames = NULL)
+```
+
+|         |                                                                                                            |
+|------------------|------------------------------------------------------|
+| `byrow` | logical. If `FALSE` (the default) the matrix is filled by columns, otherwise the matrix is filled by rows. |
+
+```{r}
+z <- matrix(rnorm(100*2), 100, 2)
+```
+
+```{r}
+matrix(1:15, 3, 5)
+```
+
+```{r}
+matrix(1:15, 3, 5, byrow = TRUE)
+```
+
+```{r}
+as.vector(matrix(1:15, 3, 5))
+```
+
+If the product of columns and rows does not match the length of the vector provided in the first argument, `matrix` recycles values.
+
+# Subsetting
+
+```         
+x[300,100]
+x[1:300,1:100]
+x[1:300,]
+x[,1:100]
+```
+
+## Task 1: Visualize original image
+
+```{r}
+mnist$train$label[3]
+```
+
+```{r}
+grid <- matrix(x[3,], 28, 28)
+```
+
+```{r matrix-image, fig.width = 4, fig.height = 4}
+rafalib::mypar(1,1)
+image(1:28, 1:28, grid)
+```
+
+However, because the y-axis in `image` goes bottom to top and `x` stores pixels top to bottom the code above shows shows a flipped image. To flip it back we can use:
+
+```{r matrix-image-2, fig.width = 4, fig.height = 4, echo=FALSE}
+rafalib::mypar(1,1)
+image(1:28, 1:28, grid[, 28:1])
+```
+
+# Transpose
+
+```{r}
+dim(x)
+dim(t(x))
+```
+
+# Row and column summaries
+
+to compute the averages and standard deviations of each row, we write:
+
+```         
+avgs <- apply(x, 1, mean)
+sds <- apply(x, 1, sd)
+```
+
+To compute these for the columns, we simply change the 1 to a 2:
+
+```         
+avgs <- apply(x, 1, mean)
+sds <- apply(x, 1, sd)
+```
+
+```{r}
+avg <- rowMeans(x)
+library(matrixStats)
+sds <- rowSds(x)
+```
+
+## Task 2: Do some digits require more ink?
+
+```{r}
+boxplot(avg ~ y)
+```
+
+1s clearly require less ink (less intensity).
+
+# Conditional filtering
+
+```{r}
+matrix(1:15, 3, 5)[,c(FALSE, TRUE, TRUE, FALSE, TRUE)]
+```
+
+```         
+x[apply(!is.na(x), 1, all),]
+```
+
+This being a common operation, we have a **matrixStats** function to do it faster:
+
+```         
+x[!rowAnyNAs(x),]
+```
+
+## Task 3: Uninformative pixels?
+
+```{r}
+sds <- colSds(x)
+hist(sds, breaks = 30, main = "SDs")
+```
+
+```{r fig.width = 4, fig.height = 4}
+image(1:28, 1:28, matrix(sds, 28, 28)[, 28:1])
+```
+
+We see that there is little variation in the corners. We could remove features that have no variation since these can’t help us predict. So if we wanted to remove uninformative predictors from our matrix, we could write this one line of code:
+
+```{r}
+new_x <- x[, colSds(x) > 60]
+dim(new_x)
+```
+
+# Indexing with matrices
+
+```{r}
+mat <- matrix(1:15, 3, 5)
+mat[mat > 6 & mat < 12] <- 0
+mat
+```
+
+```         
+x[!is.na(x)] <- 0
+```
+
+## Task 4: Remove the smudges
+
+```{r}
+hist(as.vector(x), breaks = 30, main = "Pixel intensities")
+```
+
+If we think that values below, say, 50 are smudges, we can quickly make them zero using
+
+```{r}
+new_x <- x
+new_x[new_x < 50] <- 0
+```
+
+## Task 5: Binarizing the data
+
+```{r}
+bin_x <- x
+bin_x[bin_x < 255/2] <- 0
+bin_x[bin_x > 255/2] <- 1
+```
+
+or
+
+```{r}
+bin_X <- (x > 255/2)*1
+```
+
+# Vectorization for matrices
+
+```         
+sweep(x, MARGIN, STATS, FUN = "-", check.margin = TRUE, ...)
+```
+
+**Subtraction is the default arithmetic operation.**
+
+```         
+sweep(x, 1, rowMeans(x))
+```
+
+## Task 6: Standardize the digits
+
+Rows can be scaled by
+
+```         
+(x - rowMeans(x))/rowSds(x)
+```
+
+Columns require sweep
+
+```{r}
+x_mean_0 <- sweep(x, 2, colMeans(x))
+```
+
+```{r}
+x_standardized <- sweep(x_mean_0, 2, colSds(x), FUN = "/")
+```
